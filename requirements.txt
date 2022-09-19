@@ -1,0 +1,7 @@
+pandas
+jupyter
+numpy
+matplotlib
+seaborn
+statsmodels
+bioinfokit

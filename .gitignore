@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+*.sas7bdat
+*.wav
+*.m4a

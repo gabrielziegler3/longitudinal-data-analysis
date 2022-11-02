@@ -103,7 +103,8 @@ With ICC = 0.600, 60% of the variance is attributable to between-unit difference
 
 ## G
 
-#TODO hypothesis
+H0: alpha_i = 0 and alpha_i * beta_i = 0 for all i.
+H0: there is at least one alpha_i != 0 and alpha_i * beta_i != 1 for all i.
 
 For degrees of freedom, look at anova table in SAS.
 
@@ -154,6 +155,11 @@ The solutions for fixed effects table shows that:
 
 Best model:
 ```sas
+PROC MIXED DATA=Q2;
+	CLASS SITE ID PERIOD TRT SEX AGEC;
+	MODEL WORD = PERIOD TRT SITE SEX AGEC TRT*SITE TRT*AGEC /SOLUTION DDFM=SAT CL;
+	REPEATED PERIOD / SUBJECT=ID TYPE=UN;
+RUN;
 ```
 
 1. Overspecify: use all potential fixed effects factors
@@ -174,6 +180,51 @@ Then we run a LRT to assert the appropriate covariance structure. In this case, 
 
 ```sas
 ODS OUTPUT FITSTATISTICS=FULL1;
+PROC MIXED DATA=Q2;
+	CLASS SITE ID PERIOD TRT SEX AGEC;
+	MODEL WORD = PERIOD TRT SITE SEX AGEC TRT*SITE TRT*SEX TRT*AGEC /SOLUTION DDFM=SAT CL;
+	REPEATED PERIOD / SUBJECT=ID TYPE=UN;
+RUN;
+
+ODS OUTPUT FITSTATISTICS=NULL1;
+PROC MIXED DATA=Q2;
+	CLASS SITE ID PERIOD TRT SEX AGEC;
+	MODEL WORD = PERIOD TRT SITE SEX AGEC TRT*SITE TRT*SEX TRT*AGEC /SOLUTION DDFM=SAT CL;
+	REPEATED PERIOD / SUBJECT=ID TYPE=CS;
+RUN;
+
+DATA FULL1;
+    SET FULL1;
+    WHERE DESCR = "-2 Res Log Likelihood";
+    MIN2L_F = VALUE;
+    KEEP MIN2L_F;
+RUN;
+
+DATA NULL1;
+    SET NULL1;
+    WHERE DESCR = "-2 Res Log Likelihood";
+    MIN2L_N = VALUE;
+    KEEP MIN2L_N;
+RUN;
+
+DATA LRT1;
+    MERGE FULL1 NULL1;
+    LRT = MIN2L_N - MIN2L_F;
+    DF = 1;
+    P = 1-PROBCHI(LRT,DF);
+RUN;
+
+PROC PRINT DATA=LRT1;
+RUN;
+```
+
+Result: LTR = 3.7088E-10, therefore the null hypothesis can be rejected and we conclude that UN is the optimal covariance structure because that is the model that leads to the highest likelihood (because we are looking at negative likelihood), hence better fit.
+
+```sas
+/* model selection Q2 C */
+/* Check whether TRT*SEX should be in the model */
+
+ODS OUTPUT FITSTATISTICS=FULL1;
 PROC MIXED DATA=Q2 METHOD=ML;
 	CLASS SITE ID PERIOD TRT SEX AGEC;
 	MODEL WORD = PERIOD TRT SITE SEX AGEC TRT*SITE TRT*SEX TRT*AGEC /SOLUTION DDFM=SAT CL;
@@ -183,8 +234,8 @@ RUN;
 ODS OUTPUT FITSTATISTICS=NULL1;
 PROC MIXED DATA=Q2 METHOD=ML;
 	CLASS SITE ID PERIOD TRT SEX AGEC;
-	MODEL WORD = PERIOD TRT SITE SEX AGEC TRT*SITE TRT*SEX TRT*AGEC /SOLUTION DDFM=SAT CL;
-	REPEATED PERIOD / SUBJECT=ID TYPE=CS;
+	MODEL WORD = PERIOD TRT SITE SEX AGEC TRT*SITE TRT*AGEC /SOLUTION DDFM=SAT CL;
+	REPEATED PERIOD / SUBJECT=ID TYPE=UN;
 RUN;
 
 DATA FULL1;
@@ -212,7 +263,7 @@ PROC PRINT DATA=LRT1;
 RUN;
 ```
 
-Result: LTR = 6.5863E-10, therefore the null hypothesis can be rejected and we conclude that UN is the optimal covariance structure.
+Result: LTR = , therefore the null hypothesis can be rejected and we conclude #TODO
 
 4. Select best fixed effects model with ML estimation
     - Use LRT for nested fixed effects 

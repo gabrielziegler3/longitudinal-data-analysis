@@ -146,13 +146,13 @@ NOTE: marginal models DO NOT have a random statement
 
 1. Overspecify: use all potential fixed effects factors
 2. Select appropriate covariance structure using REML estimation (LRT, AIC, AICC, ...)
-3. Fix best covariance structure (?)
+3. Fix best covariance structure
 4. Select best fixed effects model with ML estimation
     - Use LRT for nested fixed effects 
     - Use information criteria (AIC, AICC, BIC) for non-hierarchical fixed effects models
-5. Fix the fixed effects model (?)
+5. Fix the fixed effects model
 6. Refit final model with REML estimates and collect residuals
-7. Investigate goodness-of-fit
+7. Investigate goodness-of-fit (check for assumptions)
 
 AIC: favours models with fewer parameters as possible.
 BIC is similar to AIC, but penalizes the number of parameters more than AIC. Thus, AIC would pick more complex models than BIC.
@@ -160,3 +160,5 @@ BIC is similar to AIC, but penalizes the number of parameters more than AIC. Thu
 NOTE:
 Interpretation three way ANOVA: Slide 92
 Model selection: Slides midex models 71
+UN allows for heteroskedasticity
+if ever asked, choose Bonferonni

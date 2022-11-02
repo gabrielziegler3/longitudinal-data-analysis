@@ -162,3 +162,14 @@ Interpretation three way ANOVA: Slide 92
 Model selection: Slides midex models 71
 UN allows for heteroskedasticity
 if ever asked, choose Bonferonni
+If there is a term with ALL the indices, that is the RESIDUAL! 
+
+
+for the model definition:
+
+all random terms are independent and normally distributed
+
+alpha_i + ... + alpha_I = 0
+beta_i + ... + beta_I = 0
+
+BLUPs are the same thing for ANOVA and Mixed models

@@ -1,4 +1,4 @@
-#Q1
+# Q1
 
 ## A
 
@@ -13,6 +13,8 @@ eta: random error
 Where all factors are independent
 Where all samples are independent
 
+* All random terms are independent
+
 c and eta are normally distributed
 
 ## B
@@ -22,36 +24,36 @@ Expected MS
 1. Assume all effects are RANDOM (hence the sigma -- variance components (VC)).
 2. Fill an X where the source (row) letter is also contained in the VC (column). The residuals column is ALWAYS filled with 1s.
 
-    | SOURCE | o^2_P | o^2_T | o^2_PT | o^2_S(T) | o^2_R |
-    |--------|-------|-------|--------|----------|-------|
- i  | P      |   X   |       |        |          |   1   |
- j  | T      |       |   X   |   X    |    X     |   1   |
- ij | PT     |       |       |   X    |          |   1   |
-k(j)| S(T)   |       |       |        |    X     |   1   |
-    | R      |       |       |        |          |   1   |
+|idx | SOURCE | o^2_P | o^2_T | o^2_PT | o^2_S(T) | o^2_R |
+|----|--------|-------|-------|--------|----------|-------|
+| i  | P      |   X   |       |        |          |   1   |
+| j  | T      |       |   X   |   X    |    X     |   1   |
+| ij | PT     |       |       |   X    |          |   1   |
+|k(j)| S(T)   |       |       |        |    X     |   1   |
+|    | R      |       |       |        |          |   1   |
 
 3. Now replace the Xs with the indices missing. The rest of the cells are filled with 0.
 
-    | SOURCE | o^2_P | o^2_T | o^2_PT | o^2_S(T) | o^2_R |
-    |--------|-------|-------|--------|----------|-------|
- i  | P      |  JK   |       |        |          |   1   |
- j  | T      |       |  IK   |   IK   |     I    |   1   |
- ij | PT     |       |       |    K   |          |   1   |
-k(j)| S(T)   |       |       |        |     I    |   1   |
-    | R      |       |       |        |          |   1   |
+|idx | SOURCE | o^2_P | o^2_T | o^2_PT | o^2_S(T) | o^2_R |
+|----|--------|-------|-------|--------|----------|-------|
+| i  | P      |  JK   |       |        |          |   1   |
+| j  | T      |       |  IK   |   IK   |     I    |   1   |
+| ij | PT     |       |       |    K   |          |   1   |
+|k(j)| S(T)   |       |       |        |     I    |   1   |
+|    | R      |       |       |        |          |   1   |
 
 4. VCs are REPLACED by quadratic functions for the fixed effects, that is fixed factors sigmas are replaced by a function Q.
 Remove non-diagonal values for the quadratic functions. Also, add the degrees of freedom column.
 
 degrees of freedom: 
 
-    | SOURCE |  Q_P  |  Q_T  |  Q_PT  | o^2_S(T) | o^2_R |     DF     |
-    |--------|-------|-------|--------|----------|-------|------------|
- i  | P      |  JK   |       |        |          |   1   |   (I-1)    |
- j  | T      |       |  IK   |        |     I    |   1   |   (J-1)    |
- ij | PT     |       |       |   K    |          |   1   | (I-1)(J-1) |
-k(j)| S(T)   |       |       |        |     I    |   1   |   J(K-1)   |
-    | R      |       |       |        |          |   1   |J(I-1)(K-1) |
+|idx | SOURCE |  Q_P  |  Q_T  |  Q_PT  | o^2_S(T) | o^2_R |     DF     |
+|----|--------|-------|-------|--------|----------|-------|------------|
+| i  | P      |  JK   |       |        |          |   1   |   (I-1)    |
+| j  | T      |       |  IK   |        |     I    |   1   |   (J-1)    |
+| ij | PT     |       |       |   K    |          |   1   | (I-1)(J-1) |
+|k(j)| S(T)   |       |       |        |     I    |   1   |   J(K-1)   |
+|    | R      |       |       |        |          |   1   |J(I-1)(K-1) |
 
 5. Then build the linear system as:
 
@@ -113,7 +115,7 @@ P-value from LRT: 0.0195. Below 0.05, then reject null hypothesis.
 There is significant effect from treatment.
 
 
-# 2
+# Q2
 
 ## A
 
@@ -263,7 +265,7 @@ PROC PRINT DATA=LRT1;
 RUN;
 ```
 
-Result: LTR = , therefore the null hypothesis can be rejected and we conclude #TODO
+Result: LTR = 0.24, therefore the null hypothesis cannot be rejected. Thus, both models have more or less the same fit, this means that the interaction TRT*SEX was not adding relevant information to the model, so we can drop it.
 
 4. Select best fixed effects model with ML estimation
     - Use LRT for nested fixed effects 
@@ -317,6 +319,69 @@ Result: LTR = 3.2972E-10, therefore the null hypothesis can be rejected and we c
 6. Refit final model with REML estimates and collect residuals
 7. Investigate goodness-of-fit
 
-# 3
+# Q3
 
 ## A
+
+```sas
+PROC MIXED DATA=LMM;
+    CLASS ID SITE TRT;
+    MODEL AVLT = TRT TIME TRT*TIME/ SOLUTION DDFM=SAT;
+    RANDOM INT TIME/SUBJECT=ID TYPE=UN;
+RUN;
+```
+
+The interpretation for the tests in this question is the same as the ANOVA.
+
+## B
+
+# TODO needs fixing
+min{sigma(t)} = (1 - rho^2) * tau^2_0 + sigma^2_r = 113.74903093
+min{sigma(t)} = (1 - 1.4801) * 89.7452 + 29.1645 = 113.74903093
+
+113.74903093 = (1 - rho^2) * 89.7452 + 29.1645
+
+113.74903093 = (1 - rho^2) * 89.7452 + 29.1645
+
+84.58453093 = (1 - rho^2) * 89.7452
+
+rho^2 = 0.9424964335697062 - 1
+
+rho^2 = -0.05750356643029375
+
+
+arg min{sigma(t)} = - rho (tau_0/tau_1) = -3.49
+
+arg min{sigma(t)} = - rho (89.7452 ** (1/2) / 0.4232) = -3.49
+
+## C
+
+% this is a guide, not part of the answer 
+The model for subject-specific follows the pattern: y_ij = b_i0 + b_i1 * t_ij + e_ij
+
+b_0 = intercept
+b_1 = slope estimate
+
+- Results for this model:
+
+    Covariance Parameter Estimates
+    Cov Parm	Subject	 Estimate
+    UN(1,1)	    ID	     89.7452    % tâu^2_0
+    UN(2,1)	    ID	     1.4801     % rho
+    UN(2,2)	    ID	     0.4232     % tâu^2_1
+    Residual	 	     29.1645    % sigma^2_r
+
+    Solution for Fixed Effects
+    Effect	        TRT	Estimate	Std     DF	    t Value	    Pr > |t|
+                                    Error	
+    Intercept	 	    44.9110	    0.4228	2581	106.22	    <.0001   % b_0
+    TRT	            1   2.2049	    0.5964	2577	3.70	    0.0002
+    TRT	            2   0.7729	    0.5988	2576	1.29	    0.1969
+    TRT	            3   0.3844	    0.5940	2577	0.65	    0.5176
+    TRT	            4   0	.	    .	.	.
+    time	 	        0.8685	    0.1154	2043	7.53	    <.0001   % b_1
+    time*TRT	    1	0.02304	    0.1616	2044	0.14	    0.8866
+    time*TRT	    2	-0.06880    0.1617	2023	-0.43	    0.6705
+    time*TRT	    3	0.1328	    0.1612	2040	0.82	    0.4100
+    time*TRT	    4	0	.	    .	.	.
+

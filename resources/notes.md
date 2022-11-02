@@ -129,10 +129,34 @@ In a marginal model (AKA, the population averaged model), the model equation is 
 There is a single response and a single residual.  
 The difference between the marginal model and a linear model is that the residuals are not assumed to be independent with constant variance.
 
+In a marginal model, we can directly estimate the correlations among each individual’s residuals.  (We do assume the residuals across different individuals are independent of each other). We can specify that they are equally correlated, as in the RM ANOVA, but we’re not limited to that assumption.  Each correlation can be unique, or measurements closer in time can have higher correlations than those farther away.  There are a number of common patterns that the residuals tend to take.
+
+Likewise, the residual variances don’t have to be equal as they do in the RM ANOVA.
+
+So in cases where the assumptions of equal variances and equal correlations are not met, we can get much better fitting models by using a marginal model.  The other big advantage is by taking a univariate approach, we can do post-hoc tests on the repeated measures factor.
+
 Goal: to describe the population as good as possible
 
 - Advantage: less sensitive to assumptions
 - Disadvantage: no knowledge on units
 
+NOTE: marginal models DO NOT have a random statement
+
+# Model Selection
+
+1. Overspecify: use all potential fixed effects factors
+2. Select appropriate covariance structure using REML estimation (LRT, AIC, AICC, ...)
+3. Fix best covariance structure (?)
+4. Select best fixed effects model with ML estimation
+    - Use LRT for nested fixed effects 
+    - Use information criteria (AIC, AICC, BIC) for non-hierarchical fixed effects models
+5. Fix the fixed effects model (?)
+6. Refit final model with REML estimates and collect residuals
+7. Investigate goodness-of-fit
+
+AIC: favours models with fewer parameters as possible.
+BIC is similar to AIC, but penalizes the number of parameters more than AIC. Thus, AIC would pick more complex models than BIC.
+
 NOTE:
 Interpretation three way ANOVA: Slide 92
+Model selection: Slides midex models 71

@@ -142,3 +142,130 @@ We cannot test the interaction because it with just periods 1 and 2, we have a n
 When period="baseline" then TRT=4 always.
 
 ## B
+
+H0: there is no effect of training i.e. b_i = 0 for i in {1,2,3,4} where b_i is the effect of training i
+H1: there is effect of training i.e. b_i != 0 for some i in {1,2,3,4}
+
+The solutions for fixed effects table shows that:
+
+- TRT=2 has a statistically significant result, therefore the null hypothesis is rejected.
+
+## C
+
+Best model:
+```sas
+```
+
+1. Overspecify: use all potential fixed effects factors
+
+First we start with a model with all interactions with TRT.
+
+```sas
+PROC MIXED DATA=Q2;
+	CLASS SITE ID PERIOD TRT SEX AGEC;
+	MODEL WORD = PERIOD TRT SITE SEX AGEC TRT*SITE TRT*SEX TRT*AGEC /SOLUTION DDFM=SAT CL;
+	REPEATED PERIOD / SUBJECT=ID TYPE=UN;
+RUN;
+```
+
+2. Select appropriate covariance structure using REML estimation (LRT, AIC, AICC, ...)
+
+Then we run a LRT to assert the appropriate covariance structure. In this case, we compare UN vs CS.
+
+```sas
+ODS OUTPUT FITSTATISTICS=FULL1;
+PROC MIXED DATA=Q2 METHOD=ML;
+	CLASS SITE ID PERIOD TRT SEX AGEC;
+	MODEL WORD = PERIOD TRT SITE SEX AGEC TRT*SITE TRT*SEX TRT*AGEC /SOLUTION DDFM=SAT CL;
+	REPEATED PERIOD / SUBJECT=ID TYPE=UN;
+RUN;
+
+ODS OUTPUT FITSTATISTICS=NULL1;
+PROC MIXED DATA=Q2 METHOD=ML;
+	CLASS SITE ID PERIOD TRT SEX AGEC;
+	MODEL WORD = PERIOD TRT SITE SEX AGEC TRT*SITE TRT*SEX TRT*AGEC /SOLUTION DDFM=SAT CL;
+	REPEATED PERIOD / SUBJECT=ID TYPE=CS;
+RUN;
+
+DATA FULL1;
+    SET FULL1;
+    WHERE DESCR = "-2 Log Likelihood";
+    MIN2L_F = VALUE;
+    KEEP MIN2L_F;
+RUN;
+
+DATA NULL1;
+    SET NULL1;
+    WHERE DESCR = "-2 Log Likelihood";
+    MIN2L_N = VALUE;
+    KEEP MIN2L_N;
+RUN;
+
+DATA LRT1;
+    MERGE FULL1 NULL1;
+    LRT = MIN2L_N - MIN2L_F;
+    DF = 1;
+    P = 1-PROBCHI(LRT,DF);
+RUN;
+
+PROC PRINT DATA=LRT1;
+RUN;
+```
+
+Result: LTR = 6.5863E-10, therefore the null hypothesis can be rejected and we conclude that UN is the optimal covariance structure.
+
+4. Select best fixed effects model with ML estimation
+    - Use LRT for nested fixed effects 
+    - Use information criteria (AIC, AICC, BIC) for non-hierarchical fixed effects models
+
+Since we are dealing with a dataset with nested hierarchies, we use LRT for model selection.
+
+```SAS
+ODS OUTPUT FITSTATISTICS=FULL1;
+PROC MIXED DATA=Q2 METHOD=ML;
+	CLASS SITE ID PERIOD TRT SEX AGEC;
+	MODEL WORD = PERIOD TRT SITE SEX AGEC TRT*SITE TRT*SEX TRT*AGEC /SOLUTION DDFM=SAT CL;
+	REPEATED PERIOD / SUBJECT=ID TYPE=UN;
+RUN;
+
+ODS OUTPUT FITSTATISTICS=NULL1;
+PROC MIXED DATA=Q2 METHOD=ML;
+	CLASS SITE ID PERIOD TRT SEX AGEC;
+	MODEL WORD = PERIOD TRT SITE SEX AGEC TRT*SITE TRT*AGEC /SOLUTION DDFM=SAT CL;
+	REPEATED PERIOD / SUBJECT=ID TYPE=CS;
+RUN;
+
+DATA FULL1;
+    SET FULL1;
+    WHERE DESCR = "-2 Log Likelihood";
+    MIN2L_F = VALUE;
+    KEEP MIN2L_F;
+RUN;
+
+DATA NULL1;
+    SET NULL1;
+    WHERE DESCR = "-2 Log Likelihood";
+    MIN2L_N = VALUE;
+    KEEP MIN2L_N;
+RUN;
+
+DATA LRT1;
+    MERGE FULL1 NULL1;
+    LRT = MIN2L_N - MIN2L_F;
+    DF = 1;
+    P = 1-PROBCHI(LRT,DF);
+RUN;
+
+PROC PRINT DATA=LRT1;
+RUN;
+```
+
+Result: LTR = 3.2972E-10, therefore the null hypothesis can be rejected and we conclude that TRT*SEX can be safely removed from the model.
+
+5. Fix the fixed effects model (?)
+6. Refit final model with REML estimates and collect residuals
+7. Investigate goodness-of-fit
+
+# 3
+
+## A

@@ -74,11 +74,44 @@ H0: ô^2_S(T) = 0
 H1: ô^2_S(T) != 0
 
 F-test = MS_S(T) / MS_R ~ F_df df(MS_S(T)), df(MS_R).
+
 - NOTE: F distribution takes two parameters and it must be the degrees of freedom of the numerator and denominator. By default it is: F = MSb / MSw
 
 ## C
 
-SKIP
+Q_T = E[MS_T - MS_S(T)]
+
+1. Add the indices that are not listed as coeffiencients:
+
+Q_T = E[MS_T - MS_S(T)] -> (SUM from j=1 to J) IK (y^_j.. - y^...)^2 / (J-1)
+
+2. Expand the MS terms. Let's start with MS_T.
+
+MS_T = SS_T / Df_T
+MS_T = (y^_j.. - y^_...)^2 / Df_T
+
+3. Expand the terms again using the model. 
+
+Model: ŷ_ijk = mu + alpha_i + beta_j + alpha_i * beta_j + c_k(i) + eta_ijk
+
+So we have:
+y^_j.. = mu + alpha_. + beta_j + alpha_. * beta_j + c_.. + eta_j..
+y^_... = mu + alpha_. + beta_. + alpha_. * beta_. + c_.. + eta_...
+
+Then we have:
+(mu + alpha_. + beta_j + alpha_. * beta_j + c_.. + eta_j..) - (mu + alpha_. + beta_. + alpha_. * beta_. + c_.. + eta_...)
+
+	 % the means are equal to 0, so we remove all factors with mean 
+	 % The variances are assumed to have MEAN=0
+(beta_j + alpha_. * beta_j +  eta_j..) - (beta_. + alpha_. * beta_. +  eta_...)
+
+Then we have only:
+
+beta_j
+
+Then MS_T = SUM IK * (beta_j)^2 / (J-1)
+
+% NOTE For nested effects this is different.
 
 ## D
 

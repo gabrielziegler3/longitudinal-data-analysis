@@ -135,12 +135,12 @@ def minimize_variability(tau_0, tau_1, off_diag, s2_r):
 
 ### Example 
 
-Covariance Parameter Estimates
-Cov Parm	Subject	    Estimate
-UN(1,1)	    ID	        89.7452     % tau0^2
-UN(2,1)	    ID	        1.4801      % off diagonal. Rho.
-UN(2,2)	    ID	        0.4232      % tau1^2
-Residual	     	    29.1645     % sigma_r^2
+    Covariance Parameter Estimates
+    Cov Parm	Subject	    Estimate
+    UN(1,1)	    ID	        89.7452     % tau0^2
+    UN(2,1)	    ID	        1.4801      % off diagonal. Rho.
+    UN(2,2)	    ID	        0.4232      % tau1^2
+    Residual	     	    29.1645     % sigma_r^2
 
 ```python
 In [2]: t2_0 = 89.7452 # tau0^2

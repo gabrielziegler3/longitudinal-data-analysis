@@ -257,3 +257,56 @@ RUN;
 
 # Q3
 
+## A
+
+```sas
+data q3;
+	set q3;
+	time_new = (time - 1) * (8 * 7);
+run;
+
+PROC MIXED DATA=Q3;
+	CLASS ID TRT;
+	MODEL CD4 = TRT TIME_NEW TRT*TIME_NEW/ SOLUTION DDFM=SAT;
+	RANDOM INT TIME_NEW /SUBJECT=ID TYPE=UN;
+RUN;
+```
+                Type 3 Tests of Fixed Effects
+    Effect	        Num DF	 Den DF	     F Value	Pr > F
+    trt	            3           177	        0.21	0.8916
+    time_new	    1	        360	        1.21	0.2726
+    time_new*trt	3	        360	        8.77	<.0001
+
+The interpretation for the tests in this question is the same as the ANOVA.
+We conclude that there is a significant effect for TRT * TIME_NEW but not for TIME_NEW or TRT alone.
+
+## B
+
+```python
+def minimize_variability(tau_0, tau_1, off_diag, s2_r):
+    rho = off_diag/(np.sqrt(tau_0)*np.sqrt(tau_1))
+    min_var = (1-rho**2)*tau_0 + s2_r 
+    min_t = -rho*np.sqrt(tau_0)/np.sqrt(tau_1)
+    print(f"*** Minimum variance: {min_var:.3f} *** \n*** Minimum variance achieved at time point {min_t:.3f} ***")
+```
+
+Covariance Parameter Estimates
+Cov Parm	Subject	Estimate
+UN(1,1)	    id	    0.4280   % tau0^2
+UN(2,1)	    id	    0.002796 % off diagonal. Rho.
+UN(2,2)	    id	    0 % tau1^2
+Residual	 	    0.395 % sigma_r^2
+
+```
+In [2]: t2_0 = 0.4280 # tau0^2
+   ...: t2_1 = 0 # tau1^2
+   ...: off_diag = 0.002796 # off-diagonal value
+   ...: s2_r = 0.395 # sigma_r^2
+   ...:
+In [3]: minimize_variability(t2_0, t2_1, off_diag, s2_r)
+*** Minimum variance: -inf ***
+*** Minimum variance achieved at time point -inf ***
+```
+
+#### ^^^^ THIS LOOKS WRONG
+

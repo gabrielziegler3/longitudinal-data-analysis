@@ -353,11 +353,8 @@ Residual	     	    29.1645     % sigma_r^2
 ```
 In [2]: t2_0 = 89.7452 # tau0^2
    ...: t2_1 = 0.4232 # tau1^2
-   ...: off_diag = 1.4801 # off-diagonal v
-   ...: alue
+   ...: off_diag = 1.4801 # off-diagonal value
    ...: s2_r = 29.1645 # sigma_r^2
-   ...: minimze_variability(t2_0, t2_1, of
-   ...: f_diag, s2_r)
    ...:
 In [3]: minimize_variability(t2_0, t2_1, off_diag, s2_r)
 *** Minimum variance: 113.733 ***

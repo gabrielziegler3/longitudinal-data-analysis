@@ -106,7 +106,7 @@ With ICC = 0.600, 60% of the variance is attributable to between-unit difference
 ## G
 
 H0: alpha_i = 0 and alpha_i * beta_i = 0 for all i.
-H0: there is at least one alpha_i != 0 and alpha_i * beta_i != 1 for all i.
+H1: there is at least one alpha_i != 0 and alpha_i * beta_i != 1 for all i.
 
 For degrees of freedom, look at anova table in SAS.
 
@@ -335,28 +335,41 @@ The interpretation for the tests in this question is the same as the ANOVA.
 
 ## B
 
-# TODO needs fixing
-min{sigma(t)} = (1 - rho^2) * tau^2_0 + sigma^2_r = 113.74903093
-min{sigma(t)} = (1 - 1.4801) * 89.7452 + 29.1645 = 113.74903093
+```python
+def minimize_variability(tau_0, tau_1, off_diag, s2_r):
+    rho = off_diag/(np.sqrt(tau_0)*np.sqrt(tau_1))
+    min_var = (1-rho**2)*tau_0 + s2_r 
+    min_t = -rho*np.sqrt(tau_0)/np.sqrt(tau_1)
+    print(f"*** Minimum variance: {min_var:.3f} *** \n*** Minimum variance achieved at time point {min_t:.3f} ***")
+```
 
-113.74903093 = (1 - rho^2) * 89.7452 + 29.1645
+Covariance Parameter Estimates
+Cov Parm	Subject	    Estimate
+UN(1,1)	    ID	        89.7452     % tau0^2
+UN(2,1)	    ID	        1.4801      % off diagonal. Rho.
+UN(2,2)	    ID	        0.4232      % tau1^2
+Residual	     	    29.1645     % sigma_r^2
 
-113.74903093 = (1 - rho^2) * 89.7452 + 29.1645
+```
+In [2]: t2_0 = 89.7452 # tau0^2
+   ...: t2_1 = 0.4232 # tau1^2
+   ...: off_diag = 1.4801 # off-diagonal v
+   ...: alue
+   ...: s2_r = 29.1645 # sigma_r^2
+   ...: minimze_variability(t2_0, t2_1, of
+   ...: f_diag, s2_r)
+   ...:
+In [3]: minimize_variability(t2_0, t2_1, off_diag, s2_r)
+*** Minimum variance: 113.733 ***
+*** Minimum variance achieved at time point -3.497 ***
+```
 
-84.58453093 = (1 - rho^2) * 89.7452
-
-rho^2 = 0.9424964335697062 - 1
-
-rho^2 = -0.05750356643029375
-
-
-arg min{sigma(t)} = - rho (tau_0/tau_1) = -3.49
-
-arg min{sigma(t)} = - rho (89.7452 ** (1/2) / 0.4232) = -3.49
+Minimum variance: 113.733
+Minimum variance achieved at time point -3.497
 
 ## C
 
-% this is a guide, not part of the answer 
+% TODO this is a guide, not part of the answer. Couldn't solve this.
 The model for subject-specific follows the pattern: y_ij = b_i0 + b_i1 * t_ij + e_ij
 
 b_0 = intercept
@@ -377,8 +390,6 @@ b_1 = slope estimate
     Intercept	 	    44.9110	    0.4228	2581	106.22	    <.0001   % b_0
     TRT	            1   2.2049	    0.5964	2577	3.70	    0.0002
     TRT	            2   0.7729	    0.5988	2576	1.29	    0.1969
-    TRT	            3   0.3844	    0.5940	2577	0.65	    0.5176
-    TRT	            4   0	.	    .	.	.
     time	 	        0.8685	    0.1154	2043	7.53	    <.0001   % b_1
     time*TRT	    1	0.02304	    0.1616	2044	0.14	    0.8866
     time*TRT	    2	-0.06880    0.1617	2023	-0.43	    0.6705

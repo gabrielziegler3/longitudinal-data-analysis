@@ -123,6 +123,41 @@ Goal: to describe individual units as good as possible
 - Advantage: knowledge on individuals
 - Disadvantage: requires several modeling assumptions that are difficult to verify
 
+## Minimize Variability
+
+```python
+def minimize_variability(tau_0, tau_1, off_diag, s2_r):
+    rho = off_diag/(np.sqrt(tau_0)*np.sqrt(tau_1))
+    min_var = (1-rho**2)*tau_0 + s2_r 
+    min_t = -rho*np.sqrt(tau_0)/np.sqrt(tau_1)
+    print(f"*** Minimum variance: {min_var:.3f} *** \n*** Minimum variance achieved at time point {min_t:.3f} ***")
+```
+
+### Example 
+
+Covariance Parameter Estimates
+Cov Parm	Subject	    Estimate
+UN(1,1)	    ID	        89.7452     % tau0^2
+UN(2,1)	    ID	        1.4801      % off diagonal. Rho.
+UN(2,2)	    ID	        0.4232      % tau1^2
+Residual	     	    29.1645     % sigma_r^2
+
+```
+In [2]: t2_0 = 89.7452 # tau0^2
+   ...: t2_1 = 0.4232 # tau1^2
+   ...: off_diag = 1.4801 # off-diagonal v
+   ...: alue
+   ...: s2_r = 29.1645 # sigma_r^2
+   ...: minimze_variability(t2_0, t2_1, of
+   ...: f_diag, s2_r)
+   ...:
+In [3]: minimize_variability(t2_0, t2_1, off_diag, s2_r)
+*** Minimum variance: 113.733 ***
+*** Minimum variance achieved at time point -3.497 ***
+```
+
+### Mock exam exercise 3b
+
 ## Marginal models
 
 In a marginal model (AKA, the population averaged model), the model equation is written just like any linear model. 

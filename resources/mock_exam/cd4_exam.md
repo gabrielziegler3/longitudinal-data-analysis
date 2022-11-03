@@ -297,7 +297,7 @@ UN(2,1)	    id	    0.002796 % off diagonal. Rho.
 UN(2,2)	    id	    0 % tau1^2
 Residual	 	    0.395 % sigma_r^2
 
-```
+```python
 In [2]: t2_0 = 0.4280 # tau0^2
    ...: t2_1 = 0 # tau1^2
    ...: off_diag = 0.002796 # off-diagonal value
